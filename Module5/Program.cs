@@ -1,6 +1,21 @@
 ﻿
 using System.Text;
 
+// Необходимо создать метод, который заполняет данные с клавиатуры по пользователю (возвращает кортеж):
+// + Имя;
+// + Фамилия;
+// + Возраст;
+// + Наличие питомца;
+// Если питомец есть, то запросить количество питомцев;
+// Если питомец есть, вызвать метод, принимающий на вход количество питомцев и возвращающий массив их кличек (заполнение с клавиатуры);
+// Запросить количество любимых цветов;
+// Вызвать метод, который возвращает массив любимых цветов по их количеству (заполнение с клавиатуры);
+// Сделать проверку, ввёл ли пользователь корректные числа: возраст, количество питомцев, количество цветов в отдельном методе;
+// Требуется проверка корректного ввода значений и повтор ввода, если ввод некорректен;
+// Корректный ввод: ввод числа типа int больше 0.
+// Метод, который принимает кортеж из предыдущего шага и показывает на экран данные.
+// Вызов методов из метода Main.
+
 class Program
 {
     public static void Main(string[] args)
@@ -11,35 +26,25 @@ class Program
         Console.InputEncoding = Encoding.GetEncoding(1251);
 
         var userData = GetUserInput();
-        //ShowUserData(userData);
-
+        ShowUserData(userData);
     }
 
 
-    static (string Name, string Surname, int Age, bool HasPets) GetUserInput()
+    static (string FirstName, string LastName, int Age, bool HasPets) GetUserInput()
     {
-        Console.Write("Введите имя: ");
+        Console.Write("Имя: ");
         var firstName = Console.ReadLine();
 
-        Console.Write("Введите фамилию: ");
+        Console.Write("Фамилия: ");
         var lastName = Console.ReadLine();
 
-        int age;
-        while (true)
-        {
-            Console.Write("Введите возраст: ");
-            if (int.TryParse(Console.ReadLine(), out age) && age > 0)
-            {
-                break;
-            }
-            Console.WriteLine("Некорректный ввод. Попробуйте ещё раз.");
-        }
+		int age = GetPositiveInt("Возраст: ");
 
         bool hasPets;
         while (true)
         {
-            Console.Write("Есть ли у вас питомец? (да/нет) ");
-            var hasPetsStr = Console.ReadLine();
+            Console.Write("Есть ли у вас питомец? (Да/Нет) ");
+            var hasPetsStr = Console.ReadLine().ToLower();
             if (hasPetsStr == "да")
             {
                 hasPets = true;
@@ -52,23 +57,13 @@ class Program
             }
             Console.WriteLine("Некорректный ввод. Попробуйте ещё раз.");
         }
-
-        //string[] petNames = null;
-        //if (hasPets)
-        //{
-        //    int petCount;
-        //    while (true)
-        //    {
-        //        Console.Write("Введите количество питомцев: ");
-        //        if (int.TryParse(Console.ReadLine(), out petCount) && petCount > 0)
-        //        {
-        //            break;
-        //        }
-        //        Console.WriteLine("Некорректный ввод. Попробуйте ещё раз.");
-        //    }
-
-        //    petNames = GetPetNames(petCount);
-        //}
+		
+		int numberOfPets;
+		string[] petNames;
+		if (hasPets) {
+			numberOfPets = GetPositiveInt("Введите количество питомцев: ");
+			petNames = GetPetNames(numberOfPets);
+		}
 
         //int colorCount;
         //while (true)
@@ -83,15 +78,15 @@ class Program
 
         //var favoriteColors = GetFavoriteColors(colorCount);
 
-        return (firstName, lastName, age, hasPets);
+        return (FirstName: firstName, LastName: lastName, Age: age, HasPets: hasPets);
     }
 
-    static void ShowUserData((string, string, int, bool, string[]) userData)
+    static void ShowUserData((string FirstName, string LastName, int Age, bool HasPets) userData)
     {
-        Console.WriteLine($"Имя: {userData.Item1}");
-        Console.WriteLine($"Фамилия: {userData.Item2}");
-        Console.WriteLine($"Возраст: {userData.Item3}");
-        Console.WriteLine($"Наличие питомца: {(userData.Item4 ? "да" : "нет")}");
+        Console.WriteLine($"Имя: {userData.FirstName}");
+        Console.WriteLine($"Фамилия: {userData.LastName}");
+        Console.WriteLine($"Возраст: {userData.Age}");
+        Console.WriteLine($"Наличие питомца: {(userData.HasPets ? "да" : "нет")}");
         //if (userData.Item4 && userData.Item5 != null)
         //{
         //    Console.WriteLine($"Количество питомцев: {userData.Item5.Length}");
@@ -100,15 +95,43 @@ class Program
         //Console.WriteLine($"Количество любимых цветов: {userData.Item6.Length}");
         //Console.WriteLine($"Любимые цвета: {string.Join(", ", userData.Item6)}");
     }
-}
+	
+	static int GetPositiveInt(string message)
+	{
+		int result;
+		while (true)
+		{
+			Console.Write(message);
+			if (int.TryParse(Console.ReadLine(), out result) && result > 0)
+				break;
+		}
 
-//        static string[] GetPetNames(int count)
-//        {
-//            var petNames = new string[count];
-//            for (int i = 0; i < count; i++)
-//            {
-//                Console.Write($"Введите кличку питомца №{i + 1}: ");
-//                petNames[i] = Console.ReadLine();
-//            }
+		return result;
+	}
+		
+	static string[] GetPetNames(int count)
+	{
+		var names = new string[count];
+		for (int i = 0; i < count; i++)
+		{
+			Console.Write($"Введите кличку питомца {i + 1}: ");
+			names[i] = Console.ReadLine();
+		}
+
+		return names;
+	}
+
+	static string[] GetColors(int count)
+	{
+		var colors = new string[count];
+		for (int i = 0; i < count; i++)
+		{
+			Console.Write($"Введите любимый цвет {i + 1}: ");
+			colors[i] = Console.ReadLine();
+		}
+
+		return colors;
+	}
+}
 
 
